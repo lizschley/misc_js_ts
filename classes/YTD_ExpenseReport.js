@@ -3,22 +3,16 @@ class YTD_ExpenseReport {
       this.data = data;
       this.csv = [['Month', 'Category', 'Subcat', 'Amount']]
       this.year = 'year from name'
-      this.current_title = 'from monthly keys'
+      this.current_title = 'from month keys'
       this.current_month = 'month'
       this.accumulators = {
         total: 0.00,
-        monthly: 0.00,
+        month: 0.00,
         category: 0.00,
         subcat: 0.00
       };
-      this.save_cat = '';
+      this.save_category = '';
       this.save_subcat = '';
-      this.which_totals = {
-        subcat: false,
-        cat: false,
-        month: false,
-        total: false
-      };
     }
 
     run() {
@@ -42,16 +36,7 @@ class YTD_ExpenseReport {
           this.retrieve_data_using_key(current_data_with_key, key)
         }
       }
-    }
-  
-    set_accumulators_to_zero(level) {
-      this.accumulators.subcat = 0.00;
-      if (level == 'subcat') return;
-      this.accumulators.category = 0.00;
-      if (level == 'category') return;
-      this.accumulators.monthly = 0.00;
-      // console.log(`this.accumulators == ${JSON.stringify(this.accumulators)}`)
-      return
+      this.add_totals_row('total')
     }
   
     retrieve_data_using_key(current_data_with_key, key){
@@ -63,30 +48,27 @@ class YTD_ExpenseReport {
       this.year = temp_array[0]
       this.current_month = temp_array[1]
       console.log(`temp array == ${JSON.stringify(temp_array)}; this.year ${this.year}; this.current_month ${this.current_month}`) 
-      this.monthly_data(curr_data)
+      this.month_data(curr_data)
     }
   
-    monthly_data(current_data){
-      this.set_accumulators_to_zero('month')
-
+    month_data(current_data){
+      this.reset_totals('month')
       console.log(`current_data length == ${current_data.length}`)
-      console.log('calling process_rows')
       this.process_rows(current_data)
     }
     
     process_rows(current_data) {
-      // console.log(this.accumulators)
       for (let row_idx = 0; row_idx < current_data.length; row_idx++) {
         let row = []
         row.push(this.current_month)
   
         let category = current_data[row_idx][0]
-        if (category != this.save_cat || (row_idx == 0)) this.set_accumulators_to_zero('category')
-        this.save_cat = category
+        if (category != this.save_category || (row_idx == 0)) this.reset_totals('category')
+        this.save_category = category
         row.push(category)
   
         let subcat = current_data[row_idx][1]
-        if (subcat != this.save_subcat || (row_idx == 0)) this.set_accumulators_to_zero('subcat')
+        if (subcat != this.save_subcat || (row_idx == 0)) this.reset_totals('subcat')
         this.save_subcat = subcat
         row.push(subcat)
   
@@ -98,15 +80,39 @@ class YTD_ExpenseReport {
         console.log(this.accumulators)
         console.log(row)
         this.csv.push(row)
-      } 
+      }
       console.log(this.csv)
-      call_fake()
+    }
+
+    reset_totals(level) {
+        if (this.save_subcat.length > 1) this.add_totals_row('subcat')
+        this.accumulators.subcat = 0.00;
+        if (level == 'subcat') return;
+        if (this.save_category.length > 1) this.add_totals_row('category')
+        this.accumulators.category = 0.00;
+        if (level == 'category') return;
+        if (this.save_category.length > 1) this.add_totals_row('month')
+        this.accumulators.month = 0.00;
+        // console.log(`this.accumulators == ${JSON.stringify(this.accumulators)}`)
+        return  
+    }
+
+    add_totals_row(level){
+        let row = []
+        row.push(this.current_month, this.save_subcat, `${this.save_subcat} SubTTL`, this.accumulators.subcat)
+        if (level == 'subcat') return;
+        row.push(this.current_month, `${this.save_category} SubTTL`, '', this.accumulators.category)
+        if (level == 'category') return;
+        row.push(`${this.current_month} SubTTL`, '', '', this.accumulators.month)
+        if (level == 'month') return;
+        row.push('Total', '', '', '', this.accumulators.total)
+        this.csv.push(row)
     }
   
     add_row_to_accumulators(amount) {
       this.accumulators.subcat = this.accumulators.subcat + amount;
       this.accumulators.category = this.accumulators.category + amount;
-      this.accumulators.monthly = this.accumulators.monthly + amount;
+      this.accumulators.month = this.accumulators.month + amount;
       this.accumulators.total = this.accumulators.total + amount;
     }
   
