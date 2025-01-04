@@ -17,7 +17,6 @@ class YTD_ExpenseReport {
     run() {
       this.order_keys_and_process_data();
       this.add_totals_row('total')
-      // console.log(this.csv)
     }
   
     order_keys_and_process_data() {
@@ -44,19 +43,15 @@ class YTD_ExpenseReport {
   
     retrieve_data_using_key(current_data_with_key, key){
       let curr_data = current_data_with_key[key]
-      // console.log(key)
-      // console.log(curr_data)
       this.current_title = key;
       var temp_array = this.current_title.split('_')
       this.year = temp_array[0]
       this.current_month = temp_array[1]
-      // console.log(`temp array == ${JSON.stringify(temp_array)}; this.year ${this.year}; this.current_month ${this.current_month}`) 
       this.month_data(curr_data)
     }
   
     month_data(current_data){
       this.reset_totals('month')
-      // console.log(`current_data length == ${current_data.length}`)
       this.process_rows(current_data)
     }
     
@@ -66,7 +61,7 @@ class YTD_ExpenseReport {
         row.push(this.current_month)
   
         let category = current_data[row_idx][0]
-        if (category != this.save_category || (row_idx == 0)) this.reset_totals('category')
+        if (category != this.save_category) this.reset_totals('category')
         this.save_category = category
         row.push(category)
 
@@ -75,14 +70,9 @@ class YTD_ExpenseReport {
   
         let amount = this.format_currency(current_data[row_idx][3])
         row.push(amount)
-        
-        // console.log(`amount == ${amount}`)
         this.add_row_to_accumulators(current_data[row_idx][3])
-        // console.log(this.accumulators)
-        // console.log(row)
         this.csv.push(row)
       }
-      // console.log(this.csv)
     }
 
     reset_totals(level) {
@@ -91,7 +81,6 @@ class YTD_ExpenseReport {
         if (this.save_category.length > 2) this.add_totals_row('month')
         if (level == 'month') return;
         this.add_totals_row('total')
-        // console.log(`this.accumulators == ${JSON.stringify(this.accumulators)}`)
         return  
     }
 
@@ -114,7 +103,6 @@ class YTD_ExpenseReport {
     set_accumulators_to_zero(level) {
       if (level == 'category') this.accumulators.category = 0.00;
       if (level == 'month') this.accumulators.month = 0.00;
-      // console.log(`this.accumulators == ${JSON.stringify(this.accumulators)}`)
       return
     }
   
@@ -131,4 +119,3 @@ class YTD_ExpenseReport {
       });
     }
   }
-  
