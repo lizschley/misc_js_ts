@@ -6,12 +6,16 @@ class YTD_ExpenseReport {
       this.current_title = 'from monthly keys'
       this.current_month = 'month'
       this.accumulators = this.accumulator_start()
-      this.data_keys = []
-      this.process_data = { save_cat: '',
-                            save_sub_cat: '',
-                          }
+      this.save_cat = '';
+      this.save_subcat = '';
+      this.which_totals = {
+        subcat: false,
+        cat: false,
+        month: false,
+        total: false
+      };
     }
-  
+
     run() {
       this.order_keys_and_process_data();
       /*
@@ -30,13 +34,10 @@ class YTD_ExpenseReport {
   
     order_keys_and_process_data() {
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-      let data_keys = []
       for (let idx = 0; idx < months.length; idx++) {
         var key = this.check_for_month_in_data_key(months[idx])
         if (!key) continue;
-        // this.data_keys.push(key);
       }
-      //console.log(`data_keys == ${this.data_keys}`)
     }
   
     check_for_month_in_data_key(month) {
@@ -97,13 +98,13 @@ class YTD_ExpenseReport {
         row.push(this.current_month)
   
         let category = current_data[row_idx][0]
-        if (category != this.process_data.save_cat || (row_idx == 0)) this.set_accumulators_to_zero('category')
-        this.process_data.save_cat = category
+        if (category != this.save_cat || (row_idx == 0)) this.set_accumulators_to_zero('category')
+        this.save_cat = category
         row.push(category)
   
         let subcat = current_data[row_idx][1]
-        if (subcat != this.process_data.save_subcat || (row_idx == 0)) this.set_accumulators_to_zero('subcat')
-        this.process_data.save_subcat = subcat
+        if (subcat != this.save_subcat || (row_idx == 0)) this.set_accumulators_to_zero('subcat')
+        this.save_subcat = subcat
         row.push(subcat)
   
         let amount = this.format_currency(current_data[row_idx][3])
