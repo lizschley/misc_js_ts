@@ -22,17 +22,23 @@ class YTD_ExpenseReport {
 
     run() {
       this.order_keys_and_process_data();
+      this.add_totals_row('total')
+      console.log(this.csv)
     }
   
     order_keys_and_process_data() {
       const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+      let done = []
       for (let idx = 0; idx < months.length; idx++) {
-        var key = this.check_for_month_in_data_key(months[idx])
-        if (!key) continue;
+        var key = this.check_for_month_in_data_key(months[idx], done)
+        if (key)
+          done.push(key)
+        else { continue;}
       }
     }
   
-    check_for_month_in_data_key(month) {
+    check_for_month_in_data_key(month, done) {
+      if (done.includes(month)) return
       for (let process_idx = 0; process_idx < this.data.length; process_idx++) {
         if (!this.data[process_idx]) return null
         let current_data_with_key = this.data[process_idx]
@@ -41,24 +47,23 @@ class YTD_ExpenseReport {
           this.retrieve_data_using_key(current_data_with_key, key)
         }
       }
-      this.add_totals_row('total')
     }
   
     retrieve_data_using_key(current_data_with_key, key){
       let curr_data = current_data_with_key[key]
-      console.log(key)
+      // console.log(key)
       // console.log(curr_data)
       this.current_title = key;
       var temp_array = this.current_title.split('_')
       this.year = temp_array[0]
       this.current_month = temp_array[1]
-      console.log(`temp array == ${JSON.stringify(temp_array)}; this.year ${this.year}; this.current_month ${this.current_month}`) 
+      // console.log(`temp array == ${JSON.stringify(temp_array)}; this.year ${this.year}; this.current_month ${this.current_month}`) 
       this.month_data(curr_data)
     }
   
     month_data(current_data){
       this.reset_totals('month')
-      console.log(`current_data length == ${current_data.length}`)
+      // console.log(`current_data length == ${current_data.length}`)
       this.process_rows(current_data)
     }
     
@@ -80,13 +85,13 @@ class YTD_ExpenseReport {
         let amount = this.format_currency(current_data[row_idx][3])
         row.push(amount)
         
-        console.log(`amount == ${amount}`)
+        // console.log(`amount == ${amount}`)
         this.add_row_to_accumulators(current_data[row_idx][3])
-        console.log(this.accumulators)
-        console.log(row)
+        // console.log(this.accumulators)
+        // console.log(row)
         this.csv.push(row)
       }
-      console.log(this.csv)
+      // console.log(this.csv)
     }
 
     reset_totals(level) {
