@@ -5,7 +5,12 @@ class YTD_ExpenseReport {
       this.year = 'year from name'
       this.current_title = 'from monthly keys'
       this.current_month = 'month'
-      this.accumulators = this.accumulator_start()
+      this.accumulators = {
+        total: 0.00,
+        monthly: 0.00,
+        category: 0.00,
+        subcat: 0.00
+      };
       this.save_cat = '';
       this.save_subcat = '';
       this.which_totals = {
@@ -18,18 +23,6 @@ class YTD_ExpenseReport {
 
     run() {
       this.order_keys_and_process_data();
-      /*
-      let current_data_with_key = this.data[idx]
-      this.month_from_title(current_data_with_key)
-      let curr_data_array = current_data_with_key[this.current_title]
-      console.log(`len of array ${current_data_with_key[this.current_title].length}`)
-      //console.log(`data == ${current_data_with_key}`)
-      //console.log(`key == ${this.current_title}`)
-      //console.log(`curr_data_array ${curr_data_array}`)
-      for (let process_idx = 0; process_idx < curr_data_array.length; process_idx++) {
-        //console.log(in process_idx loop)
-      }
-      */
     }
   
     order_keys_and_process_data() {
@@ -48,16 +41,6 @@ class YTD_ExpenseReport {
         if (key.includes(month)) {
           this.retrieve_data_using_key(current_data_with_key, key)
         }
-      }
-    }
-  
-    accumulator_start() {
-      return {
-        level_cleared: '',
-        total: 0.00,
-        monthly: 0.00,
-        category: 0.00,
-        subcat: 0.00
       }
     }
   
@@ -85,14 +68,14 @@ class YTD_ExpenseReport {
   
     monthly_data(current_data){
       this.set_accumulators_to_zero('month')
+
       console.log(`current_data length == ${current_data.length}`)
       console.log('calling process_rows')
       this.process_rows(current_data)
     }
     
     process_rows(current_data) {
-      console.log('in process rows');
-      console.log(this.accumulators)
+      // console.log(this.accumulators)
       for (let row_idx = 0; row_idx < current_data.length; row_idx++) {
         let row = []
         row.push(this.current_month)
@@ -121,7 +104,6 @@ class YTD_ExpenseReport {
     }
   
     add_row_to_accumulators(amount) {
-      this.accumulators.level_cleared = '',
       this.accumulators.subcat = this.accumulators.subcat + amount;
       this.accumulators.category = this.accumulators.category + amount;
       this.accumulators.monthly = this.accumulators.monthly + amount;
