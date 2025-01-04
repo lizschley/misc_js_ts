@@ -11,6 +11,11 @@ class YTD_ExpenseReport {
         category: 0.00,
         subcat: 0.00
       };
+      this.set_clear_indicator = {
+        month: false,
+        category: false,
+        subcat: false
+      }
       this.save_category = '';
       this.save_subcat = '';
     }
@@ -86,20 +91,22 @@ class YTD_ExpenseReport {
 
     reset_totals(level) {
         if (this.save_subcat.length > 1) this.add_totals_row('subcat')
-        this.accumulators.subcat = 0.00;
+        this.set_clear_indicator.subcat = true
         if (level == 'subcat') return;
         if (this.save_category.length > 1) this.add_totals_row('category')
-        this.accumulators.category = 0.00;
+        this.set_clear_indicator.category = true
         if (level == 'category') return;
         if (this.save_category.length > 1) this.add_totals_row('month')
-        this.accumulators.month = 0.00;
+        this.set_clear_indicator.month = 0
+        if (level == 'month') return;
+        this.add_totals_row('total')
         // console.log(`this.accumulators == ${JSON.stringify(this.accumulators)}`)
         return  
     }
 
     add_totals_row(level){
         let row = []
-        row.push(this.current_month, this.save_subcat, `${this.save_subcat} SubTTL`, this.accumulators.subcat)
+        row.push(this.current_month, this.save_category, `${this.save_subcat} SubTTL`, this.accumulators.subcat)
         if (level == 'subcat') return;
         row.push(this.current_month, `${this.save_category} SubTTL`, '', this.accumulators.category)
         if (level == 'category') return;
@@ -107,6 +114,15 @@ class YTD_ExpenseReport {
         if (level == 'month') return;
         row.push('Total', '', '', '', this.accumulators.total)
         this.csv.push(row)
+    }
+
+    set_accumulators_to_zero() {
+      if (this.set_clear_indicator.subcat) this.accumulators.subcat = 0.00;
+      if (this.set_clear_indicator.category) this.accumulators.category = 0.00;
+      if (level == 'category') return;
+      if (this.set_clear_indicator.month) this.accumulators.month = 0.00;
+      // console.log(`this.accumulators == ${JSON.stringify(this.accumulators)}`)
+      return
     }
   
     add_row_to_accumulators(amount) {
