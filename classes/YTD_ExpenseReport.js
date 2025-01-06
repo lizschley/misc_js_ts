@@ -86,7 +86,7 @@ class YTD_ExpenseReport {
           this.set_accumulators_to_zero('month')
           break; 
         case "total":
-          row.push('Total', '', '', '', this.format_currency(this.accumulators.total))
+          row.push('Total', '', '', this.format_currency(this.accumulators.total))
           break;
       }
       this.csv.push(row)

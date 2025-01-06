@@ -1,11 +1,9 @@
-
 function run_reports() {
     const report_name = create_report_name('_ytd_rpt')
-    create_new_tab(report_name)
     const folder_id = readNamedRange('folder_id')
     const report_class = new YTD_ExpenseReport(loop_through_folder(folder_id));  
     report_class.run();
-    console.log(report_class.csv)
+    // console.log(report_class.csv)
     createAndPopulateSheet(report_name, report_class.csv)
   }
   
@@ -19,10 +17,13 @@ function run_reports() {
     // Get the dimensions of the array
     //console.log(report_array)
     let rows = report_array.length
+    console.log(`rows == ${rows}`)
     let cols = report_array[0].length;
+    console.log(`cols == ${cols}`)
   
     // Set up the range for data population
     let range = curr_report.getRange(1, 1, rows, cols);
+    console.log(`range.getA1Notation() == ${range.getA1Notation()}`)
   
     // Populate the sheet with array data
     range.setValues(report_array);
@@ -47,15 +48,11 @@ function run_reports() {
     return date_string + report_name;
   }
   
-  function create_new_tab(report_name) {
-    console.log(report_name)
-  }
-  
   function getData(file_id) {
     let ss = SpreadsheetApp.openById(file_id) // Opens the spreadsheet  
     let name = ss.getName();
-    // console.log('name == ' + name)
-    let sheet = ss.getSheetByName('test');
+    console.log('name == ' + name)
+    let sheet = ss.getSheetByName('expenses');
     // let month_range = sheet.getRange(['A2:D']);
     let month_range = sheet.getRange(2,1,sheet.getLastRow()-1,4)
     month_range.sort([
