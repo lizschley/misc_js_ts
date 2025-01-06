@@ -14,6 +14,7 @@ class YTD_ExpenseReport {
       this.save_category = '';
     }
 
+    // this will eventually be a way to select report, unless I make this a base class (cleaner?)
     run() {
       this.order_keys_and_process_data();
     }
