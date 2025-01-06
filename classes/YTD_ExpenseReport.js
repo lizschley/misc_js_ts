@@ -14,9 +14,9 @@ class YTD_ExpenseReport {
       this.save_category = '';
     }
 
+    // this will eventually be a way to select report, unless I make this a base class (cleaner?)
     run() {
       this.order_keys_and_process_data();
-      this.add_totals_row('total')
     }
   
     order_keys_and_process_data() {
@@ -27,6 +27,7 @@ class YTD_ExpenseReport {
           this.done.push(key)
         else { continue;}
       }
+      this.add_totals_row('total')
     }
   
     check_for_month_in_data_key(month) {
@@ -47,12 +48,7 @@ class YTD_ExpenseReport {
       var temp_array = this.current_title.split('_')
       this.year = temp_array[0]
       this.current_month = temp_array[1]
-      this.month_data(curr_data)
-    }
-  
-    month_data(current_data){
-      this.reset_totals('month')
-      this.process_rows(current_data)
+      this.process_rows(curr_data)
     }
     
     process_rows(current_data) {
@@ -61,7 +57,7 @@ class YTD_ExpenseReport {
         row.push(this.current_month)
   
         let category = current_data[row_idx][0]
-        if (category != this.save_category) this.reset_totals('category')
+        if (category != this.save_category && row_idx !=0) this.add_totals_row('category')
         this.save_category = category
         row.push(category)
 
@@ -73,31 +69,27 @@ class YTD_ExpenseReport {
         this.add_row_to_accumulators(current_data[row_idx][3])
         this.csv.push(row)
       }
-    }
-
-    reset_totals(level) {
-        if (this.save_category.length > 2) this.add_totals_row('category')
-        if (level == 'category') return;
-        if (this.save_category.length > 2) this.add_totals_row('month')
-        if (level == 'month') return;
-        this.add_totals_row('total')
-        return  
+      this.add_totals_row('category')
+      this.save_category = ''
+      this.add_totals_row('month')
     }
 
     add_totals_row(level){
-        let row = []
-        row.push(this.current_month, `${this.save_category} SubTTL`, '', this.accumulators.category)
-        this.set_accumulators_to_zero('category')
-        this.csv.push(row)
-        if (level == 'category') return;
-        row = []
-        row.push(`${this.current_month} SubTTL`, '', '', this.accumulators.month)
-        this.csv.push(row)
-        this.set_accumulators_to_zero('month')
-        if (level == 'month') return;
-        row = []
-        row.push('Total', '', '', '', this.accumulators.total)
-        this.csv.push(row)
+      let row = []
+      switch(level) {
+        case "category":
+          row.push(this.current_month, `${this.save_category} SubTTL`, '', this.format_currency(this.accumulators.category))
+          this.set_accumulators_to_zero('category')
+          break;
+        case "month":
+          row.push(`${this.current_month} SubTTL`, '', '', this.format_currency(this.accumulators.month))
+          this.set_accumulators_to_zero('month')
+          break; 
+        case "total":
+          row.push('Total', '', '', this.format_currency(this.accumulators.total))
+          break;
+      }
+      this.csv.push(row)
     }
 
     set_accumulators_to_zero(level) {
@@ -119,3 +111,4 @@ class YTD_ExpenseReport {
       });
     }
   }
+  
