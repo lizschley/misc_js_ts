@@ -1,7 +1,7 @@
 /*
 @OnlyCurrentDoc
 */
-  function dropdown(a1Notation){
+function dropdown(a1Notation){
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const expense_sheet = ss.getSheetByName('expenses');
     const range = expense_sheet.getRange(a1Notation);

@@ -1,4 +1,4 @@
- function onEdit(e){
+function onEdit(e){
     var a1 = e.range.getA1Notation();
     console.log(`a1 == ${a1}`);
     budget.dropdown(a1);
