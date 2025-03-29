@@ -17,18 +17,6 @@
 
 1. Change project name
 2. Run budget.clean\_old\_data() \- **need to give permissions**
-   * Clean out rows and data validations (leave headers)
-   * Add category validation (column A)
-   * Add date validation  (column C)
-   * Add date formatting
-   * Add currency formatting (column D)
-   * Add in annual rows
-     * Send in the monthly spreadsheet name
-     * Loop through rows and create a row from annual sheet:
-       * Make sure categories and subcats are valid
-       * Make sure each row is an array of arrays, even if loading one row at a time
-       * Make sure date is a valid date string \- not in annuals, but created programmatically
-       * Divide the annual amount by 12 (annual → monthly)
 
 #### Final Step \- In new monthly spreadsheet  {#final-step---in-new-monthly-spreadsheet}
 
