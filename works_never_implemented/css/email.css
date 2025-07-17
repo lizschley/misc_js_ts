@@ -1,0 +1,16 @@
+/* simple stuff for email testing report */
+/* /Users/eaffie/development/misc_js_ts/ */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: Lightgreen;
+}
