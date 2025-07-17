@@ -1,7 +1,7 @@
 class YTD_ExpenseReport {
     constructor(data) {
       this.data = data;
-      this.csv = [['Month', 'Category', 'Subcat', 'Amount']]
+      this.csv = [['Month', 'Category', 'Subcat', 'Amount', 'Notes']]
       this.totals_csv = [['Category', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']]
       this.month_cat_subtotals = this.category_by_month()
       this.month_subtotals = []

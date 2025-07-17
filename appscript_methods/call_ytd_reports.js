@@ -5,7 +5,7 @@ const ODD = '#fdff99'
 const SUBTOTAL = 'SubTTL'
 const TOTAL = 'Total'
 const EXPECTED_TOTAL_COLUMNS = 13
-const EXPECTED_DETAIL_COLUMNS = 4
+const EXPECTED_DETAIL_COLUMNS = 5
 
 
 function run_reports() {
