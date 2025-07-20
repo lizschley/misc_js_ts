@@ -5,7 +5,7 @@ const ODD = '#fdff99'
 const SUBTOTAL = 'SubTTL'
 const TOTAL = 'Total'
 const EXPECTED_TOTAL_COLUMNS = 13
-const EXPECTED_DETAIL_COLUMNS = 5
+const EXPECTED_DETAIL_COLUMNS = 4
 
 
 function run_reports() {
@@ -86,7 +86,7 @@ function getData(file_id) {
     {column: 2, ascending: true},
   ]);
   let values = month_range.getValues()
-  // console.log(values)
+  // throw new Error(values);
   return { [name]: values }
 }
 
