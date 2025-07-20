@@ -80,7 +80,7 @@ function getData(file_id) {
   console.log('name == ' + name)
   let sheet = ss.getSheetByName('expenses');
   // let month_range = sheet.getRange(['A2:D']);
-  let month_range = sheet.getRange(2,1,sheet.getLastRow()-1,5)
+  let month_range = sheet.getRange(2,1,sheet.getLastRow()-1,EXPECTED_DETAIL_COLUMNS)
   month_range.sort([
     {column: 1, ascending: true},
     {column: 2, ascending: true},
