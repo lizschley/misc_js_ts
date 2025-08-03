@@ -24,5 +24,5 @@
 
 ## Final Step \- Add Triggers and test
 
-1. Add new trigger (run dropdowns on edit)
+1. Add two new triggers: onEdit & onOpen
 2. Make sure dropdowns work
