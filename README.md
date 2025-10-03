@@ -2,10 +2,11 @@
 
 ## First Step \- Run Month End Reports
 
-1. In the current monthly file once all the expenses are entered
-2. Run the reports (as close as possible to the first day of the new month)
-3. Take the time to check for anomolies
-4. Move to the budget library for the next step
+1. Finish entering the complete prior month's expenses
+2. Open the YTD Budget report (Reports folder) & make sure the folder id is for the current year's monthly reports
+3. Run the reports (as close as possible to the first day of the new month)
+4. Take the time to check for anomolies
+5. Move to the budget library for the next step
 
 ## Second Step \- Create and Format new monthly expense spreadsheet
 
