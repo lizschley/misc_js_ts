@@ -1,7 +1,7 @@
 const AQUA_HEX = '#7afbff'
 const YELLOW_HEX = '#FFFF00'
-const EVEN = '#c2ff99'
-const ODD = '#fdff99'
+const EVEN = '#eed3fa'
+const ODD = '#fae5d3'
 const SUBTOTAL = 'SubTTL'
 const TOTAL = 'Total'
 const EXPECTED_TOTAL_COLUMNS = 13
@@ -68,9 +68,9 @@ function create_report_name(report_name) {
   const now = new Date (new Date().toLocaleString("en-US", {timeZone: "America/New_York", hour12: true}));
   var date_string = now.getFullYear().toString() + '-';
   date_string = date_string + (now.getMonth() + 1) + '-';
-  date_string = date_string + now.getDate() + '-';
-  date_string = date_string + now.getHours() + '-';
-  date_string = date_string + now.getMinutes();
+  date_string = date_string + now.getDate() //+ '-';
+  // date_string = date_string + now.getHours() + '-';
+  // date_string = date_string + now.getMinutes();
   return date_string + report_name;
 }
 
@@ -80,13 +80,13 @@ function getData(file_id) {
   console.log('name == ' + name)
   let sheet = ss.getSheetByName('expenses');
   // let month_range = sheet.getRange(['A2:D']);
-  let month_range = sheet.getRange(2,1,sheet.getLastRow()-1, 5)
+  let month_range = sheet.getRange(2,1,sheet.getLastRow()-1,5)
   month_range.sort([
     {column: 1, ascending: true},
     {column: 2, ascending: true},
   ]);
   let values = month_range.getValues()
-  // throw new Error(values);
+  // console.log(values)
   return { [name]: values }
 }
 
@@ -167,4 +167,21 @@ function alternate_row_colors(totals_name) {
       row.setBackground(EVEN);
     }
   }
+}
+
+function listAllUserProperties() {
+  const userProps = PropertiesService.getUserProperties();
+  const allProps = userProps.getProperties();
+
+  // Format for better readability
+  const formatted = {
+    totalProperties: Object.keys(allProps).length,
+    userEmail: Session.getEffectiveUser().getEmail(),
+    properties: allProps
+  };
+
+  Logger.log('=== USER PROPERTIES ===');
+  Logger.log(JSON.stringify(formatted, null, 2));
+
+  return formatted;
 }

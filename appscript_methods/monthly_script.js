@@ -1,52 +1,71 @@
 function onEdit(e){
-    var a1 = e.range.getA1Notation();
-    console.log(`a1 == ${a1}`);
-    budget.dropdown(a1);
+  let cell_notation = e.range.getA1Notation();
+  console.log(`notation == ${cell_notation}`);
+  const sheet_name = SpreadsheetApp.getActive().getActiveSheet().getName()
+  switch(sheet_name) {
+    case 'expenses':
+      Logger.log('in expenses')
+      budget.dropdown(cell_notation, sheet_name);
+      break;
+    case 'dropdowns':
+      Logger.log('in dropdowns')
+      budget.match_named_range_to_dd(cell_notation, sheet_name);
+      break;
+    default:
+      Logger.log(`no code implemented for onEdit in current sheet: ${sheet_name}`)
   }
+}
 
-  function onOpen() {
-    const ss = SpreadsheetApp.getActive();
-    const menu = [{ name: 'Sort By Date', functionName: 'sort_date'}]
-    ss.addMenu('Custom', menu);
-  }
+function onOpen() {
+  const ss = SpreadsheetApp.getActive();
+  const menu = [{ name: 'Sort By Date', functionName: 'sort_date'}]
+  ss.addMenu('Custom', menu);
+}
 
-  function sort_date() {
-    const ss = SpreadsheetApp.getActive();
-    const expense_sheet = ss.getSheetByName('expenses');
-    let month_range = expense_sheet.getRange(2,1,expense_sheet.getLastRow()-1,5)
-    month_range.sort([
-      {column: 3, ascending: true}
-    ]);
-    date_range = expense_sheet.getRange('C2:C');
-    date_range.sort({column: 3, ascending: true});
-  }
+function sort_date() {
+  const ss = SpreadsheetApp.getActive();
+  const expense_sheet = ss.getSheetByName('expenses');
+  let month_range = expense_sheet.getRange(2,1,expense_sheet.getLastRow()-1,5)
+  month_range.sort([
+    {column: 3, ascending: true}
+  ]);
+  date_range = expense_sheet.getRange('C2:C');
+  date_range.sort({column: 3, ascending: true});
+}
 
-  // DO NOT RUN THIS UNLESS THIS IS A COPIED SPREADSHEET
-  // IT WILL DESTROY DATA
-  function clean_prior_data(){
-    const ss = SpreadsheetApp.getActiveSpreadsheet()
-    const name = ss.getName()
-    const spreadsheet_id = ss.getId()
-    budget.clean_old_data(ss, spreadsheet_id, name)
-  }
+// DO NOT RUN THIS UNLESS THIS IS A COPIED SPREADSHEET
+// IT WILL DESTROY DATA
+function clean_prior_data(){
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const name = ss.getName()
+  const spreadsheet_id = ss.getId()
+  budget.clean_old_data(ss, spreadsheet_id, name)
+}
 
-  function test_annuals() {
-    const ss = SpreadsheetApp.getActiveSpreadsheet()
-    const name = ss.getName()
-    budget.test_annuals(ss, name)
-  }
+function test_find_cols_in_range() {
+  const ss = SpreadsheetApp.getActive();
+  const sheet = ss.getSheetByName('dropdowns');
+  num_cols = budget.find_number_of_columns(sheet, 'B1:AJ1')
+  Logger.log('number of columns == ' + num_cols)
+}
 
-  // just for learning (final underscore in function name prevents it from showing up in dd list)
-  function getValidationRule_() {
-    const ss = SpreadsheetApp.getActiveSpreadsheet()
-    const sheet = ss.getSheetByName('expenses')
-    const range = sheet.getRange('C2:C')
-    const rule = range.getDataValidation()
-    if (rule != null) {
-      const criteria = rule.getCriteriaType();
-      const args = rule.getCriteriaValues();
-      Logger.log('The data validation rule is %s %s', criteria, args);
-    } else {
-      Logger.log('The cell does not have a data validation rule.');
-    }
+function test_annuals() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const name = ss.getName()
+  budget.test_annuals(ss, name)
+}
+
+// just for learning (final underscore in function name prevents it from showing up in dd list)
+function getValidationRule_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const sheet = ss.getSheetByName('expenses')
+  const range = sheet.getRange('C2:C')
+  const rule = range.getDataValidation()
+  if (rule != null) {
+    const criteria = rule.getCriteriaType();
+    const args = rule.getCriteriaValues();
+    Logger.log('The data validation rule is %s %s', criteria, args);
+  } else {
+    Logger.log('The cell does not have a data validation rule.');
   }
+}
