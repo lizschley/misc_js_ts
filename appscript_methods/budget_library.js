@@ -1,8 +1,11 @@
 /* dropdown makes it so I can add submenus in the next column */
-function dropdown(cell_notation, sheet_name){
+function dropdown(in_notation, in_sheet_name){
+  const cell_notation = in_notation.toUpperCase()
+  const sheet_name = in_sheet_name.toLowerCase()
   Logger.log(`in budget dropdown, cell_notation == ${cell_notation}`)
   const letter = get_column_letter(cell_notation)
-  if (letter != 'A') { return; }
+  Logger.log ('letter == ' + letter)
+  if (letter != 'A'){ return; }
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const expense_sheet = ss.getSheetByName(sheet_name);
   const row_and_col = log_row_and_column(expense_sheet, cell_notation)
@@ -23,20 +26,24 @@ function dropdown(cell_notation, sheet_name){
                 .build();
   expense_sheet.getRange(row_and_col.row,row_and_col.col+1).setDataValidation(rule);
 }
-
 // cell_notation designed for single cell only
 // Untested for > 1 cell
 function get_single_cell_value(sheet, cell_notation) {
   const value = sheet.getRange(cell_notation).getValue(); // Single API call
   return value;
 }
-
 // This is specific to dropdown triggers that add new categories and subcategories used in our expense spreadsheet
 // It updates the named_range that goes with the dropdown columns
 // If you add a new category it adds a new dropdown subcategory header (not necessary to update that named_range)
 // If you delete a category, you will need to delete the column
 // Deleting a category you need to delete and associated name ranges & fix all the following named_ranges
-function match_named_range_to_dd(cell_notation, sheet_name){
+function match_named_range_to_dd(in_notation, in_sheet_name){
+  const cell_notation = in_notation.toUpperCase()
+  if (cell_notation.includes(':')) {
+    Logger.log('exit without error with cell_notation == ' + cell_notation)
+    return;
+  } else { Logger.log(`in match_named_range_to_dd, cell_notation == ${cell_notation}`) }
+  const sheet_name = in_sheet_name.toLowerCase()
   const number = get_column_number(cell_notation)
   if (number == '1') { return; }
   const letter = get_column_letter(cell_notation)
@@ -55,9 +62,6 @@ function match_named_range_to_dd(cell_notation, sheet_name){
   Logger.log('in match_named_range_to_dd, col_header == ' + col_header)
   Logger.log('in match_named_range_to_dd, range_name == ' + range_name)
   Logger.log('in match_named_range_to_dd, num_rows == ' + num_rows)
-  Logger.log('in match_named_range_to_dd, start_row == ' + start_nums.row)
-  Logger.log('in match_named_range_to_dd, start_col == ' + start_nums.col)
-  Logger.log('in match_named_range_to_dd, start_nums == ' + start_nums)
   Logger.log('in match_named_range_to_dd, start_row == ' + start_nums.row)
   Logger.log('in match_named_range_to_dd, start_col == ' + start_nums.col)
   edit_named_range({sheet: dropdown_sheet, range_name: range_name, start_row: start_nums.row,
@@ -110,7 +114,7 @@ function find_rows_in_range(dropdown_sheet, cell_notation, start=2, max_num=36) 
   const range = dropdown_sheet.getRange(notation);
   Logger.log('in find rows in range, temp range is ' + range.getA1Notation())
   const values = range.getValues();
-  Logger.log('values == ' + values);
+
   const num_rows = values.filter(String).length;
   Logger.log('in find rows in range, in find =_rows_in_range, num_rows == ' + num_rows);
   return num_rows
