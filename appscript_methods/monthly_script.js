@@ -55,6 +55,8 @@ function clean_prior_data(){
   budget.clean_old_data(ss, spreadsheet_id, name)
 }
 
+// the following three functions were only for testing functionaliy or for learning
+
 function test_find_cols_in_range() {
   const ss = SpreadsheetApp.getActive();
   const sheet = ss.getSheetByName('dropdowns');
