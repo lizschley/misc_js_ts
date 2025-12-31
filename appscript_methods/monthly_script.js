@@ -1,32 +1,10 @@
-function onEdit(e){
-  const sheet_name = SpreadsheetApp.getActive().getActiveSheet().getName()
-  const notation = e.range.getA1Notation()
-  if (notation.includes(':')) {
-    Logger.log('exit without error with notation == ' + notation)
-    return;
+function subcat_dd_or_create_named_range(e) {
+  const sheet = e.range.getSheet();
+  if (sheet.getName() == 'expenses') {
+    budget.dropdown(e.range.getA1Notation(), SpreadsheetApp.getActive().getActiveSheet().getName());
+  } else if (sheet.getName() == 'dropdowns') {
+    budget.match_named_range_to_dd(e.range.getA1Notation(), SpreadsheetApp.getActive().getActiveSheet().getName());
   }
-  switch(sheet_name) {
-    case 'expenses':
-      Logger.log('in expenses')
-      expenses_on_edit(e);
-      break;
-    case 'dropdowns':
-      Logger.log('in dropdowns')
-      dropdowns_on_edit(e);
-      break;
-    default:
-      Logger.log(`no code implemented for onEdit in current sheet: ${sheet_name}`)
-  }
-}
-
-function expenses_on_edit(e) {
-  Logger.log('in expenses')
-  budget.dropdown(e.range.getA1Notation(), SpreadsheetApp.getActive().getActiveSheet().getName());
-}
-
-function dropdowns_on_edit(e) {
-  Logger.log('in dropdowns')
-  budget.match_named_range_to_dd(e.range.getA1Notation(), SpreadsheetApp.getActive().getActiveSheet().getName());
 }
 
 function onOpen() {

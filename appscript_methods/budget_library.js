@@ -1,33 +1,31 @@
 /* dropdown makes it so I can add submenus in the next column */
 function dropdown(in_notation, in_sheet_name){
-  input_data = input_to_range_helper({sheet_name: in_sheet_name, a1_notation: in_notation, letters_not_allowed: ['A']})
+  input_data = input_to_range_helper({sheet_name: in_sheet_name, a1_notation: in_notation, expected_letters: ['A']})
   expense_sheet_helper = new RangeHelper(input_data)
   expense_sheet_helper.run()
   Logger.log('Successful completion of expense sheet dropdown code!')
 }
-//{initial_sheet_name, initia, start_row=2, start_col, num_rows=1, num_cols=1} = {}
-
 // This is specific to dropdown triggers that add new categories and subcategories used in our expense spreadsheet
 // It updates the named_range that goes with the dropdown columns
 // If you add a new category it adds a new dropdown subcategory header (not necessary to update that named_range)
 // If you delete a category, you will need to delete the column
 // Deleting a category you need to delete and associated name ranges & fix all the following named_ranges
 function match_named_range_to_dd(in_notation, in_sheet_name){
-  input_data = input_to_range_helper({sheet_name: in_sheet_name, a1_notation: in_notation, numbers_not_allowed: [], last_col: 'AJ'})
+  input_data = input_to_range_helper({sheet_name: in_sheet_name, a1_notation: in_notation, numbers_not_allowed: [1], last_col: 'AJ'})
   expense_sheet_helper = new RangeHelper(input_data)
   expense_sheet_helper.run()
   Logger.log('Successful completion of dropdown sheet match_named_range_to_dd code!')
 }
 
-function input_to_range_helper({sheet_name, a1_notation, one_cell_only=true, letters_not_allowed=[], numbers_not_allowed=[], last_col=''} = {}) {
+function input_to_range_helper({sheet_name, a1_notation, one_cell_only=true, expected_letters=[], numbers_not_allowed=[], last_col=''} = {}) {
   return {
     sheet_name: sheet_name,
     a1_notation: a1_notation,
     one_cell_only: one_cell_only,
-    letters_not_allowed: letters_not_allowed,
+    expected_letters: expected_letters,
     numbers_not_allowed: numbers_not_allowed,
     last_col: last_col,
-    numbers_not_allowed: rows_not_allowed
+    numbers_not_allowed: numbers_not_allowed
   };
 }
 
