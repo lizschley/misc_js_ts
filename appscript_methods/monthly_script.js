@@ -24,6 +24,10 @@ function sort_date() {
   date_range.sort({column: 3, ascending: true});
 }
 
+function create_named_ranges_from_col_headers() {
+  budget.dynamic_named_ranges_from_headers();
+}
+
 // DO NOT RUN THIS UNLESS THIS IS A COPIED SPREADSHEET
 // IT WILL DESTROY DATA
 function clean_prior_data(){
@@ -61,4 +65,8 @@ function getValidationRule_() {
   } else {
     Logger.log('The cell does not have a data validation rule.');
   }
+}
+
+function test_named_range_create_edit() {
+  budget.test_create_or_edit_named_ranges('E1', 'testing');
 }
