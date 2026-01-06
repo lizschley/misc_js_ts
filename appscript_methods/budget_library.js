@@ -153,17 +153,25 @@ function ensure_unique_name(folder_id, new_name) {
   }
 }
 
-function dynamic_named_ranges_from_headers(in_notation='', in_sheet_name='dropdowns'){
-  // {sheet_name, '', one_cell_only=false, expected_letters=[], numbers_not_allowed=[], last_col=''} = {}
+function _dynamic_named_ranges_from_headers(in_notation, in_sheet_name){
+  // {sheet_name, a1_notation, one_cell_only=false, expected_letters=[], numbers_not_allowed=[], last_col=''} = {}
   input_data = input_to_range_helper({sheet_name: in_sheet_name, a1_notation: in_notation, one_cell_only: false})
   dropdown_sheet_helper = new RangeHelper(input_data)
-  dropdown_sheet_helper.create_named_ranges_by_col_header()
+  dropdown_sheet_helper.create_or_edit_ranges_by_col_header()
   Logger.log('Successful completion of dynamic_named_ranges_from_headers!')
 }
 
+// input_to_range_helper({sheet_name, a1_notation, one_cell_only=true, expected_letters=[], numbers_not_allowed=[], last_col=''} = {})
+function test_misc_range_helper(in_notation, in_sheet_name) {
+  Logger.log(`on code.gs, in_notation: ${in_notation}, in_sheet_name; ${in_sheet_name}`)
+  named_ranges_tester = new RangeHelper({sheet_name: in_sheet_name, a1_notation: in_notation})
+  named_ranges_tester.test_misc_range_helper({sheet_name: in_sheet_name, a1_notation: in_notation})
+  Logger.log('Successful completion of test_misc_range_helper!')
+}
+
 //function parameters: {sheet_name, a1_notation, one_cell_only=true, expected_letters=[], numbers_not_allowed=[], last_col=''} = {}
-function test_create_or_edit_named_ranges(in_notation, in_sheet_name) {
-  // ex.call {sheet_name: in_sheet_name, a1_notation: in_notation, numbers_not_allowed: [1], last_col: 'AJ'}
+function _create_or_edit_named_range(in_notation, in_sheet_name) {
+  // ex.call {sheet_name: in_sheet_name, a1_notation'}
   named_ranges_tester = new RangeHelper({sheet_name: in_sheet_name, a1_notation: in_notation})
   named_ranges_tester.create_or_update_named_range()
   Logger.log('Successful completion of create_or_update_named_range code!')

@@ -24,8 +24,12 @@ function sort_date() {
   date_range.sort({column: 3, ascending: true});
 }
 
-function create_named_ranges_from_col_headers() {
-  budget.dynamic_named_ranges_from_headers();
+function create_or_edit_named_ranges_from_col_headers() {
+  budget._dynamic_named_ranges_from_headers('A1', SpreadsheetApp.getActive().getActiveSheet().getName());
+}
+
+function test_create_or_edit_named_range(){
+  budget._create_or_edit_named_range('E6', SpreadsheetApp.getActive().getActiveSheet().getName())
 }
 
 // DO NOT RUN THIS UNLESS THIS IS A COPIED SPREADSHEET
@@ -68,5 +72,9 @@ function getValidationRule_() {
 }
 
 function test_named_range_create_edit() {
-  budget.test_create_or_edit_named_ranges('E1', 'testing');
+  budget.test_misc_range_helper('E1', 'testing')
+}
+
+function test_misc_range_helper() {
+  budget.test_misc_range_helper('B1', 'testing')
 }
