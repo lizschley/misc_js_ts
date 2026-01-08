@@ -1,9 +1,15 @@
 function subcat_dd_or_create_named_range(e) {
   const sheet = e.range.getSheet();
+  const a1_notation = e.range.getA1Notation()
   if (sheet.getName() == 'expenses') {
-    budget.dropdown(e.range.getA1Notation(), SpreadsheetApp.getActive().getActiveSheet().getName());
+    Logger.log ('a1_notation: e.range.getA1Notation(): ' + e.range.getA1Notation())
+    if (a1_notation.includes('A')) {
+      budget.dropdown(a1_notation, SpreadsheetApp.getActive().getActiveSheet().getName());
+    }
   } else if (sheet.getName() == 'dropdowns') {
-    budget.match_named_range_to_dd(e.range.getA1Notation(), SpreadsheetApp.getActive().getActiveSheet().getName());
+    if (!(a1_notation.includes('1'))) {
+      budget.match_named_range_to_dd(e.range.getA1Notation(), SpreadsheetApp.getActive().getActiveSheet().getName());
+    }
   }
 }
 
