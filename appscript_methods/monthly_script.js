@@ -1,32 +1,16 @@
-function onEdit(e){
-  const sheet_name = SpreadsheetApp.getActive().getActiveSheet().getName()
-  const notation = e.range.getA1Notation()
-  if (notation.includes(':')) {
-    Logger.log('exit without error with notation == ' + notation)
-    return;
+function subcat_dd_or_create_named_range(e) {
+  const sheet = e.range.getSheet();
+  const a1_notation = e.range.getA1Notation()
+  if (sheet.getName() == 'expenses') {
+    Logger.log ('a1_notation: e.range.getA1Notation(): ' + e.range.getA1Notation())
+    if (a1_notation.includes('A')) {
+      budget.dropdown(a1_notation, SpreadsheetApp.getActive().getActiveSheet().getName());
+    }
+  } else if (sheet.getName() == 'dropdowns') {
+    if (!(a1_notation.includes('1'))) {
+      budget.match_named_range_to_dd(e.range.getA1Notation(), SpreadsheetApp.getActive().getActiveSheet().getName());
+    }
   }
-  switch(sheet_name) {
-    case 'expenses':
-      Logger.log('in expenses')
-      expenses_on_edit(e);
-      break;
-    case 'dropdowns':
-      Logger.log('in dropdowns')
-      dropdowns_on_edit(e);
-      break;
-    default:
-      Logger.log(`no code implemented for onEdit in current sheet: ${sheet_name}`)
-  }
-}
-
-function expenses_on_edit(e) {
-  Logger.log('in expenses')
-  budget.dropdown(e.range.getA1Notation(), SpreadsheetApp.getActive().getActiveSheet().getName());
-}
-
-function dropdowns_on_edit(e) {
-  Logger.log('in dropdowns')
-  budget.match_named_range_to_dd(e.range.getA1Notation(), SpreadsheetApp.getActive().getActiveSheet().getName());
 }
 
 function onOpen() {
@@ -46,6 +30,14 @@ function sort_date() {
   date_range.sort({column: 3, ascending: true});
 }
 
+function create_or_edit_named_ranges_from_col_headers() {
+  budget._dynamic_named_ranges_from_headers('A1', SpreadsheetApp.getActive().getActiveSheet().getName());
+}
+
+function test_create_or_edit_named_range(){
+  budget._create_or_edit_named_range('E6', SpreadsheetApp.getActive().getActiveSheet().getName())
+}
+
 // DO NOT RUN THIS UNLESS THIS IS A COPIED SPREADSHEET
 // IT WILL DESTROY DATA
 function clean_prior_data(){
@@ -54,6 +46,8 @@ function clean_prior_data(){
   const spreadsheet_id = ss.getId()
   budget.clean_old_data(ss, spreadsheet_id, name)
 }
+
+// the following three functions were only for testing functionaliy or for learning
 
 function test_find_cols_in_range() {
   const ss = SpreadsheetApp.getActive();
@@ -81,4 +75,12 @@ function getValidationRule_() {
   } else {
     Logger.log('The cell does not have a data validation rule.');
   }
+}
+
+function test_named_range_create_edit() {
+  budget.test_misc_range_helper('E1', 'testing')
+}
+
+function test_misc_range_helper() {
+  budget.test_misc_range_helper('B1', 'testing')
 }
