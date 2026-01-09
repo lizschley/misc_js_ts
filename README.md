@@ -25,5 +25,5 @@
 
 ## Final Step \- Add Triggers and test
 
-1. Add two new triggers: onEdit & onOpen
+1. Add two new triggers: onEdit: subcat_dd_or_create_named_range  & onOpen
 2. Make sure dropdowns work
