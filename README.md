@@ -4,9 +4,10 @@
 
 1. Finish entering the complete prior month's expenses
 2. YTD Budget report (Reports folder); folder id is for the current year's monthly reports
-3. Run the reports (as close as possible to the first day of the new month)
-4. Take the time to check for anomolies
-5. Move to the budget library for the next step
+3. YTD Budget report (current monthly expenses sheet); prior monthly id is for sheet id for the prior month (same id used in budget library copy id)
+4. Run the reports (as close as possible to the first day of the new month)
+5. Take the time to check for anomolies
+6. Move to the budget library for the next step
 
 ## Second Step \- Create and Format new monthly expense spreadsheet
 

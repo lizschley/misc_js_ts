@@ -3,7 +3,7 @@ function dropdown(in_notation, in_sheet_name){
   input_data = input_to_range_helper({sheet_name: in_sheet_name, a1_notation: in_notation})
   expense_sheet_helper = new RangeHelper(input_data)
   expense_sheet_helper.run()
-  Logger.log('Successful completion of expense sheet dropdown code!')
+  console.log('Successful completion of expense sheet dropdown code!')
 }
 // This is specific to dropdown triggers that add new categories and subcategories used in our expense spreadsheet
 // It updates the named_range that goes with the dropdown columns
@@ -11,10 +11,11 @@ function dropdown(in_notation, in_sheet_name){
 // If you delete a category, you will need to delete the column
 // Deleting a category you need to delete and associated name ranges & fix all the following named_ranges
 function match_named_range_to_dd(in_notation, in_sheet_name){
+  console.log(`in match_named_range_to_dd: in_notation: ${in_notation} & in_sheet_name: ${in_sheet_name}`)
   input_data = input_to_range_helper({sheet_name: in_sheet_name, a1_notation: in_notation})
   dropdown_sheet_helper = new RangeHelper(input_data)
   dropdown_sheet_helper.run()
-  Logger.log('Successful completion of dropdown sheet match_named_range_to_dd code!')
+  console.log('Successful completion of dropdown sheet match_named_range_to_dd code!')
 }
 
 function input_to_range_helper({sheet_name, a1_notation, one_cell_only=true} = {}) {
@@ -29,7 +30,7 @@ function input_to_range_helper({sheet_name, a1_notation, one_cell_only=true} = {
 // MAKE SURE variables have the correct values
 function copy_monthly_file() {
   library_values = getLibraryValues()
-  // Logger.log(JSON.stringify(library_values)); // Log the values to the Apps Script log
+  // console.log(JSON.stringify(library_values)); // Log the values to the Apps Script log
   const folder_id = getValue('folder_id', library_values)
   const copy_id = getValue('copy_id', library_values)
   const new_name = getValue('new_name', library_values)
@@ -51,6 +52,7 @@ function getValue(key, library_values) {
 
 // this and the functions it calls are initiated manually from monthly spreadsheet
 function clean_old_data(ss, spreadsheet_id, name) {
+  console.log('in clean_old_data')
   if (ss.getId() != spreadsheet_id) {
     throw Error('wrong spreadsheet')
   }
@@ -70,12 +72,14 @@ function test_annuals(ss, name) {
 }
 
 function delete_rows(expense_sheet) {
+  console.log('in delete_rows')
   const range = expense_sheet.getRange(2, 1, expense_sheet.getMaxRows(), expense_sheet.getMaxColumns());
   // deleting cells also deletes the data validations
   range.deleteCells(SpreadsheetApp.Dimension.COLUMNS);
 }
 
 function set_category_validation(ss, expense_sheet) {
+  console.log('in set_category_validation')
   const dropdown_sheet = ss.getSheetByName('dropdowns')
   const category_range = dropdown_sheet.getRange(2,1,dropdown_sheet.getLastRow()-1,1)
   const expense_range = expense_sheet.getRange("A2:A");
@@ -87,6 +91,7 @@ function set_category_validation(ss, expense_sheet) {
 }
 
 function set_date_validation(expense_sheet) {
+  console.log('in set_date_validation')
   const range = expense_sheet.getRange("C2:C");
   const rule = SpreadsheetApp.newDataValidation()
       .requireDate()
@@ -95,16 +100,19 @@ function set_date_validation(expense_sheet) {
 }
 
 function formatDate(expense_sheet) {
+  console.log('in formatDate')
   let column = expense_sheet.getRange("C2:C"); // Column C
   column.setNumberFormat("MM/dd/yyyy");
 }
 
 function formatCurrency(expense_sheet) {
+  console.log('in formatCurrency')
   let column = expense_sheet.getRange("D2:D"); // Column D
   column.setNumberFormat("$#,##0.00");
 }
 
 function add_annuals(ss, expense_sheet, name) {
+  console.log('add_annuals')
   const annuals_sheet = ss.getSheetByName('annuals');
   const data_rows = annuals_sheet.getRange(2,1,annuals_sheet.getLastRow()-1,annuals_sheet.getLastColumn()).getValues();
   const date = make_date(name)
@@ -114,16 +122,16 @@ function add_annuals(ss, expense_sheet, name) {
   for (let idx = 0; idx < data_rows.length; idx++) {
     number = data_rows[idx][2]/12
     row = [[data_rows[idx][0], data_rows[idx][1], date, number]]
-    // Logger.log(row)
+    // console.log(row)
     range = expense_sheet.getRange(target_row, 1, 1, row[0].length);
     range.setValues(row)
     target_row++
   }
-  // Logger.log('date == ' + date)
-  // Logger.log('annual rows == ' + data_rows)
-  // Logger.log('size of rows == ' + data_rows.length)
-  // Logger.log(`annuals_sheet.getLastRow()-1: ${annuals_sheet.getLastRow()-1}`)
-  // Logger.log(`annuals_sheet.getLastColumn(): ${annuals_sheet.getLastColumn()}`)
+  // console.log('date == ' + date)
+  // console.log('annual rows == ' + data_rows)
+  // console.log('size of rows == ' + data_rows.length)
+  // console.log(`annuals_sheet.getLastRow()-1: ${annuals_sheet.getLastRow()-1}`)
+  // console.log(`annuals_sheet.getLastColumn(): ${annuals_sheet.getLastColumn()}`)
 }
 
 function make_date(name) {
@@ -154,15 +162,15 @@ function _dynamic_named_ranges_from_headers(in_notation, in_sheet_name){
   input_data = input_to_range_helper({sheet_name: in_sheet_name, a1_notation: in_notation, one_cell_only: false})
   dropdown_sheet_helper = new RangeHelper(input_data)
   dropdown_sheet_helper.create_or_edit_ranges_by_col_header()
-  Logger.log('Successful completion of dynamic_named_ranges_from_headers!')
+  console.log('Successful completion of dynamic_named_ranges_from_headers!')
 }
 
 // input_to_range_helper({sheet_name, a1_notation, one_cell_only=true} = {})
 function test_misc_range_helper(in_notation, in_sheet_name) {
-  Logger.log(`on code.gs, in_notation: ${in_notation}, in_sheet_name; ${in_sheet_name}`)
+  console.log(`on code.gs, in_notation: ${in_notation}, in_sheet_name; ${in_sheet_name}`)
   named_ranges_tester = new RangeHelper({sheet_name: in_sheet_name, a1_notation: in_notation})
   named_ranges_tester.test_misc_range_helper({sheet_name: in_sheet_name, a1_notation: in_notation})
-  Logger.log('Successful completion of test_misc_range_helper!')
+  console.log('Successful completion of test_misc_range_helper!')
 }
 
 //function parameters: {sheet_name, a1_notation, one_cell_only=true} = {}
@@ -170,7 +178,7 @@ function _create_or_edit_named_range(in_notation, in_sheet_name) {
   // ex.call {sheet_name: in_sheet_name, a1_notation'}
   named_ranges_tester = new RangeHelper({sheet_name: in_sheet_name, a1_notation: in_notation})
   named_ranges_tester.create_or_update_named_range()
-  Logger.log('Successful completion of create_or_update_named_range code!')
+  console.log('Successful completion of create_or_update_named_range code!')
 }
 
 /*

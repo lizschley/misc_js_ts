@@ -2,12 +2,13 @@ function subcat_dd_or_create_named_range(e) {
   const sheet = e.range.getSheet();
   const a1_notation = e.range.getA1Notation()
   if (sheet.getName() == 'expenses') {
-    Logger.log ('a1_notation: e.range.getA1Notation(): ' + e.range.getA1Notation())
+    console.log ('a1_notation: e.range.getA1Notation(): ' + e.range.getA1Notation())
     if (a1_notation.includes('A')) {
       budget.dropdown(a1_notation, SpreadsheetApp.getActive().getActiveSheet().getName());
     }
   } else if (sheet.getName() == 'dropdowns') {
     if (!(a1_notation.includes('1'))) {
+      console.log('In subcat_dd_or_create_named_range: ' + e.range.getA1Notation())
       budget.match_named_range_to_dd(e.range.getA1Notation(), SpreadsheetApp.getActive().getActiveSheet().getName());
     }
   }
@@ -82,5 +83,5 @@ function test_named_range_create_edit() {
 }
 
 function test_misc_range_helper() {
-  budget.test_misc_range_helper('B1', 'testing')
+  budget.match_named_range_to_dd('d10', 'dropdowns')
 }
