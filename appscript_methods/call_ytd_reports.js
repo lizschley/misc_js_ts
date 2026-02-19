@@ -1,29 +1,95 @@
 const AQUA_HEX = '#7afbff'
 const YELLOW_HEX = '#FFFF00'
+const IVORY_HEX = '#FFFFF0'
+const HALF_WHITE_HEX = '#FFFEFA'
 const EVEN = '#eed3fa'
 const ODD = '#fae5d3'
 const SUBTOTAL = 'SubTTL'
 const TOTAL = 'Total'
 const EXPECTED_TOTAL_COLUMNS = 13
 const EXPECTED_DETAIL_COLUMNS = 4
+const EXPECTED_NOTES_COLUMNS = 4
 
 
 function run_reports() {
-  const report_name = create_report_name('_ytd_rpt')
+  const details_name = create_report_name('_ytd_details')
   const totals_name = create_report_name('_ytd_totals')
+  const notes_name = create_report_name('_ytd_notes')
   const folder_id = readNamedRange('folder_id')
-  const report_class = new YTD_ExpenseReport(loop_through_folder(folder_id));
-  report_class.run();
-  // console.log(report_class.csv)
-  createAndPopulateSheet(report_name, report_class.csv, EXPECTED_DETAIL_COLUMNS)
+  const prior_monthly_id = readNamedRange('prior_monthly_id')
+  const categories = get_categories(prior_monthly_id, 'categories')
+  // console.log(categories)
+  const input_data = loop_through_folder(folder_id)
+  const report_class = new YTD_ExpenseReport(input_data, categories);
+  report_class.expense_data_to_reports();
+  // console.log(report_class.detail_csv)
+  createAndPopulateSheet(details_name, report_class.detail_csv, EXPECTED_DETAIL_COLUMNS)
   // report_class.totals_csv.forEach(test_total_length)
   createAndPopulateSheet(totals_name, report_class.totals_csv, EXPECTED_TOTAL_COLUMNS)
-  finishing_touches(report_name)
+  createAndPopulateSheet(notes_name, report_class.notes_csv, EXPECTED_DETAIL_COLUMNS)
+  finishing_touches(details_name)
   finish_totals(totals_name)
-  //Logger.log(report_class.month_cat_subtotals)
-  //Logger.log(report_class.month_subtotals)
+  //console.log(report_class.month_cat_subtotals)
+  //console.log(report_class.month_subtotals)
 }
 
+// before report, called by run_reports()
+function create_report_name(report_name) {
+  const now = new Date (new Date().toLocaleString("en-US", {timeZone: "America/New_York", hour12: true}));
+  var date_string = now.getFullYear().toString() + '-';
+  date_string = date_string + (now.getMonth() + 1) + '-';
+  date_string = date_string + now.getDate() //+ '-';
+  // date_string = date_string + now.getHours() + '-';
+  // date_string = date_string + now.getMinutes();
+  return date_string + report_name;
+}
+
+function readNamedRange(range_name) {
+  var range = SpreadsheetApp.getActive().getRangeByName(range_name);
+  var values = range.getValues().flat();
+  var folder_id = values.length == 1 ? values[0] : values;
+  console.log(JSON.stringify(`folder_id == ${folder_id}`));
+  return folder_id
+}
+
+function get_categories(ss_id, range_name) {
+  const ss = SpreadsheetApp.openById(ss_id);
+  const range = ss.getRangeByName(range_name);
+  return range.getValues().filter(String).flat();
+}
+
+function loop_through_folder(folder_id) {
+  let output = []
+  let folder = DriveApp.getFolderById(folder_id); // Replace with your folder ID
+  let files = folder.getFiles();
+  while (files.hasNext()) {
+    var file = files.next();
+    if (file.getMimeType() === "application/vnd.google-apps.spreadsheet") {
+      temp_file_id = file.getId()
+      // console.log('temp file id == ' + temp_file_id)
+      output.push(getData(temp_file_id))
+    }
+  }
+  return output
+}
+
+function getData(file_id) {
+  let ss = SpreadsheetApp.openById(file_id) // Opens the spreadsheet
+  let name = ss.getName();
+  // console.log('name == ' + name)
+  let sheet = ss.getSheetByName('expenses');
+  // let month_range = sheet.getRange(['A2:D']);
+  let month_range = sheet.getRange(2,1,sheet.getLastRow()-1,5)
+  month_range.sort([
+    {column: 1, ascending: true},
+    {column: 2, ascending: true},
+  ]);
+  let values = month_range.getValues()
+  // console.log(values)
+  return {[name]: values}
+}
+
+// after report, called by run_reports()
 function createAndPopulateSheet(report_name, report_array, expected_length) {
   // Get the active spreadsheet
   let ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -51,65 +117,16 @@ function createAndPopulateSheet(report_name, report_array, expected_length) {
   try {
     range.setValues(report_array);
   } catch(e){
-    Logger.log (report_array)
-    Logger.log(e)
+    console.log (report_array)
+    console.log(e)
   }
-}
-
-function readNamedRange(range_name) {
-  var range = SpreadsheetApp.getActive().getRangeByName(range_name);
-  var values = range.getValues().flat();
-  var folder_id = values.length == 1 ? values[0] : values;
-  console.log(JSON.stringify(`folder_id == ${folder_id}`));
-  return folder_id
-}
-
-function create_report_name(report_name) {
-  const now = new Date (new Date().toLocaleString("en-US", {timeZone: "America/New_York", hour12: true}));
-  var date_string = now.getFullYear().toString() + '-';
-  date_string = date_string + (now.getMonth() + 1) + '-';
-  date_string = date_string + now.getDate() //+ '-';
-  // date_string = date_string + now.getHours() + '-';
-  // date_string = date_string + now.getMinutes();
-  return date_string + report_name;
-}
-
-function getData(file_id) {
-  let ss = SpreadsheetApp.openById(file_id) // Opens the spreadsheet
-  let name = ss.getName();
-  console.log('name == ' + name)
-  let sheet = ss.getSheetByName('expenses');
-  // let month_range = sheet.getRange(['A2:D']);
-  let month_range = sheet.getRange(2,1,sheet.getLastRow()-1,5)
-  month_range.sort([
-    {column: 1, ascending: true},
-    {column: 2, ascending: true},
-  ]);
-  let values = month_range.getValues()
-  // console.log(values)
-  return { [name]: values }
-}
-
-function loop_through_folder(folder_id) {
-  let output = []
-  let folder = DriveApp.getFolderById(folder_id); // Replace with your folder ID
-  let files = folder.getFiles();
-  while (files.hasNext()) {
-    var file = files.next();
-    if (file.getMimeType() === "application/vnd.google-apps.spreadsheet") {
-      temp_file_id = file.getId()
-      // console.log('temp file id == ' + temp_file_id)
-      output.push(getData(temp_file_id))
-    }
-  }
-  return output
 }
 
 function finishing_touches(report_name) {
   sheet = SpreadsheetApp.getActive().getSheetByName(report_name)
   basic_finish(sheet)
   sheet.autoResizeColumns(1, EXPECTED_DETAIL_COLUMNS);
-  // Logger.log(`before iterate_rows using ${report_name}`)
+  // console.log(`before iterate_rows using ${report_name}`)
   iterate_rows(sheet)
 }
 
@@ -118,6 +135,13 @@ function finish_totals(totals_name) {
   sheet.autoResizeColumns(1, EXPECTED_TOTAL_COLUMNS);
   basic_finish(sheet)
   alternate_row_colors(totals_name)
+}
+
+function finish_notes(notes_name) {
+  sheet = SpreadsheetApp.getActive().getSheetByName(notes_name)
+  sheet.autoResizeColumns(1, EXPECTED_DETAIL_COLUMNS);
+  basic_finish(sheet)
+  alternate_row_colors(notes_name, IVORY_HEX, HALF_WHITE_HEX)
 }
 
 function basic_finish(sheet) {
@@ -139,7 +163,7 @@ function iterate_rows(sheet) {
 // numRows	Integer	The number of rows to return.
 // numColumns	Integer	The number of columns to return.
 function check_row_and_highlight(sheet, row, idx) {
-  // Logger.log(`in check row & highlight - passed in sheet name: ${sheet.getName()}`)
+  // console.log(`in check row & highlight - passed in sheet name: ${sheet.getName()}`)
   highlight_color = check_color(row, idx)
   if (highlight_color == 'white') return
   let range = sheet.getRange(idx+2, 1, 1, sheet.getLastColumn()); // Select row 5, all columns
@@ -152,8 +176,8 @@ function check_color(row, idx) {
   return 'white'
 }
 
-function alternate_row_colors(totals_name) {
-  sheet = SpreadsheetApp.getActive().getSheetByName(totals_name)
+function alternate_row_colors(name, odd=ODD, even=EVEN) {
+  sheet = SpreadsheetApp.getActive().getSheetByName(name)
   const dataRange = sheet.getDataRange();
   const rows = dataRange.getNumRows();
   const cols = dataRange.getNumColumns();
@@ -162,26 +186,25 @@ function alternate_row_colors(totals_name) {
     const row = sheet.getRange(i + 1, 1, 1, cols); // Start from row 1
     if (i == 0) continue
     if ((i + 1) % 2 === 1) { // Odd rows
-      row.setBackground(ODD);
+      row.setBackground(odd);
     } else { // Even rows
-      row.setBackground(EVEN);
+      row.setBackground(even);
     }
   }
 }
 
-function listAllUserProperties() {
-  const userProps = PropertiesService.getUserProperties();
-  const allProps = userProps.getProperties();
+// Don't have any properties, but it was helpful once as a learning tool. It will give me a start, if user properties ever fulfills a need.
+function list_all_user_properties() {
+  const user_props = PropertiesService.getUserProperties();
+  const all_props = user_props.getProperties();
 
   // Format for better readability
   const formatted = {
-    totalProperties: Object.keys(allProps).length,
+    totalProperties: Object.keys(all_props).length,
     userEmail: Session.getEffectiveUser().getEmail(),
-    properties: allProps
+    properties: all_props
   };
 
-  Logger.log('=== USER PROPERTIES ===');
-  Logger.log(JSON.stringify(formatted, null, 2));
-
-  return formatted;
+  console.log('=== USER PROPERTIES ===');
+  console.log(JSON.stringify(formatted, null, 2));
 }

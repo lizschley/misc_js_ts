@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test Sort</title>
+</head>
+
+<body>
+    <h3>Test Sort</h3>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('The DOM is fully loaded and parsed!');
+            const arr = [{
+                    "year":2026,
+                    "month_idx":1,
+                    "month":"February",
+                    "rows":[
+                        [
+                            "Auto",
+                            "Insurance",
+                            "143.08333333333334",
+                            ""
+                        ],
+                        [
+                            "Auto",
+                            "Maintenance",
+                            "44.99",
+                            "jumper cable"
+                        ],
+                        [
+                            "Auto",
+                            "PPTax",
+                            "29.166666666666668",
+                            ""
+                        ]
+                    ]
+                },
+                {
+                    "year":2026,
+                    "month_idx":0,
+                    "month":"January",
+                    "rows":[
+                        [
+                            "Apps",
+                            "Collectorz/CovPrice",
+                            "14.154166666666667",
+                            ""
+                        ],
+                        [
+                            "Apps",
+                            "PictureThis",
+                            "2.4991666666666665",
+                            ""
+                        ],
+                        [
+                            "Auto",
+                            "Fuel",
+                            "22.68",
+                            ""
+                        ]
+                    ]
+                }]
+
+                arr.sort((a, b) => {
+                    // Only sort on age if not identical
+                    if (a.year < b.year) return -1;
+                    if (a.year > b.year) return 1;
+                    // Sort on name
+                    if (a.month_idx < b.month_idx) return -1;
+                    if (a.month_idx > b.month_idx) return 1;
+                    // Both idential, return 0
+                    return 0;
+                });
+
+                console.log(arr)
+            // Your JavaScript code here
+        });
+    </script>
+</body>
+
+</html>
