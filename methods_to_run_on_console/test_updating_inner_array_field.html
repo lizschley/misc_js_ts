@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test Sort</title>
+</head>
+
+<body>
+    <h3>Copy, add code you want to test in the Dom Listener method</h3>
+    <h5>Then open in browser or refresh</h5>
+    <p>Inspect element has console tab</p>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('The DOM is fully loaded and parsed!');
+            let outer_idx = 0
+            let inner_idx = 7
+            let array = [
+                ['find_by_1', 0, 0, 0, 0, 0, 0, 0],
+                ['find_by_2', 0, 0, 0, 0, 0, 0, 0],
+                ['find_by_3', 0, 0, 0, 0, 0, 0, 0],
+                ['find_by_4', 0, 0, 0, 0, 0, 0, 0],
+                ['find_by_5', 0, 0, 0, 0, 0, 0, 0]
+            ]
+            for (let outer_idx = 0; outer_idx < array.length; outer_idx++) {
+                if (array[outer_idx][0] == 'find_by_5') {
+                    array[outer_idx][inner_idx] = 125
+                    break
+                }
+            }
+            console.log('now array == ' + array)
+        });
+    </script>
+</body>
+
+</html>
