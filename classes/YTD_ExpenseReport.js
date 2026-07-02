@@ -62,7 +62,7 @@ class YTD_ExpenseReport {
   // The functions before run() are called from the constructor or from a method called in preparation for running
   loop_through_orig_data_to_prep() {
     for (let idx = 0; idx < this.orig_data.length; idx++) {
-      // console.log('in loop through orig data, top level, expect idx to be 0 and 1' + idx)
+      // console.error('in loop through orig data, top level, expect idx to be 0 and 1' + idx)
       this.prepare_top_level_data(idx)
       this.current_data = this.current_data[this.current_title]
       // this.print_json_object(this.expense, 'in loop through orig_data to prep, checking out this.expense')
@@ -97,7 +97,7 @@ class YTD_ExpenseReport {
     for (let row_idx = 0; row_idx < this.current_data.length; row_idx++) {
       // debug option
       // if (row_idx > 10) { break;}
-      // console.log('expecting numbers from 0-10, 2 times: ' + row_idx )
+      // console.error('expecting numbers from 0-10, 2 times: ' + row_idx )
       this.extract_row_arrays_into_row_hashes(top_idx, row_idx)
     }
   }
@@ -130,7 +130,7 @@ class YTD_ExpenseReport {
     });
   }
   print_json_object(to_print, pre_message){
-    console.log(`${pre_message}: ${JSON.stringify(to_print)}`)
+    console.error(`${pre_message}: ${JSON.stringify(to_print)}`)
   }
 
   get_month_idx(month) {
@@ -159,7 +159,7 @@ class YTD_ExpenseReport {
           this.process_month_level()
           this.save_level_variables('month', month_idx, row_idx)
         } else if (month_idx == 0 && row_idx == 0) {
-          console.log('in loop_through_data_by_month, cat and subcat are being assigned right now')
+          // console.error('in loop_through_data_by_month, cat and subcat are being assigned right now')
           this.save_level_variables('month', month_idx, row_idx)
         } else {
           this.output_cat_and_subcat_subtotals(month_idx, row_idx)
@@ -170,13 +170,13 @@ class YTD_ExpenseReport {
   }
 
   output_cat_and_subcat_subtotals(month_idx, row_idx) {
-    // console.log(`in top of row loop, month_idx: ${month_idx} & row_idx: ${row_idx}`)
+    // console.error(`in top of row loop, month_idx: ${month_idx} & row_idx: ${row_idx}`)
     // this.print_json_object(this.expense.data[month_idx].rows[row_idx], 'in top of row loop, input is: ' )
     if (this.saved.cat_and_subcat.cat.length == 0 || this.saved.cat_and_subcat.subcat.length == 0) {
-      console.log('Assuming this is the only time that the cat and subcat variable are empty strings ')
-      console.log(`output_cat_and_subcat_subtotals(), this.month_idx: ${month_idx}, this.row_idx: ${row_idx}`)
-      console.log(`output_cat_and_subcat_subtotals(), this.saved.cat_and_subcat.cat: ${this.saved.cat_and_subcat.cat}`)
-      console.log(`output_cat_and_subcat_subtotals(), this.saved.cat_and_subcat.subcat: ${this.saved.cat_and_subcat.subcat}`)
+      console.error('Assuming this is the only time that the cat and subcat variable are empty strings ')
+      console.error(`output_cat_and_subcat_subtotals(), this.month_idx: ${month_idx}, this.row_idx: ${row_idx}`)
+      console.error(`output_cat_and_subcat_subtotals(), this.saved.cat_and_subcat.cat: ${this.saved.cat_and_subcat.cat}`)
+      console.error(`output_cat_and_subcat_subtotals(), this.saved.cat_and_subcat.subcat: ${this.saved.cat_and_subcat.subcat}`)
       this.throw_error(`line #: 183, cat or subcat are empty strings at month_idx: ${month_idx}, row_idx: ${row_idx}`)
       return
     }
@@ -213,7 +213,7 @@ class YTD_ExpenseReport {
   /** this assumes that month category or subcat has changed, write notes for the subcat */
   process_subcat_level() {
     // if (this.saved.cat_and_subcat.subcat == 'Amazon') {
-    //   console.log(`Step two, process subcat: ${this.saved.cat_and_subcat.subcat}, cat is ${this.saved.cat_and_subcat.subcat}`)
+    //   console.error(`Step two, process subcat: ${this.saved.cat_and_subcat.subcat}, cat is ${this.saved.cat_and_subcat.subcat}`)
     //   this.print_json_object(this.note_accumulator.notes_string,'L216 process_subcat_level, note.string about to be pushed: ' )
     // }
     if (this.note_accumulator.notes_string.length == 0) { return }
@@ -223,7 +223,7 @@ class YTD_ExpenseReport {
     // }
     this.notes_csv.push(csv_row)
     // if (this.saved.cat_and_subcat.subcat == 'Amazon') {
-    //   console.log('in process subcat, setting accumulators to zero')
+    //   console.error('in process subcat, setting accumulators to zero')
     // }
     this.set_accumulators_to_zero('subcat')
   }
@@ -296,7 +296,7 @@ class YTD_ExpenseReport {
 
   set_accumulators_to_zero(level) {
     // if (this.saved.cat_and_subcat.subcat == 'Amazon') {
-    //   console.log('L286,  set_accumulators_to_zero, notestring is back to empty string' )
+    //   console.error('L286,  set_accumulators_to_zero, notestring is back to empty string' )
     // }
     if (level == 'subcat') {this.note_accumulator.notes_string = ''}
     if (level == 'category') {this.accumulators.category = 0.00;}
@@ -311,22 +311,8 @@ class YTD_ExpenseReport {
 
   add_note_to_accumulator(note) {
     note = note.replaceAll(',', ':')
-    // if (this.saved.cat_and_subcat.subcat == 'Amazon') {
-    //   console.log('Step 1 - L302, first note accumulated: ' + note)
-    //   console.log(`in add_note to accumulator: ${this.saved.cat_and_subcat.subcat}, cat is ${this.saved.cat_and_subcat.subcat}`)
-    // }
-    // if (this.saved.cat_and_subcat.subcat == 'Amazon') {
-    //   this.print_json_object(this.note_accumulator.notes_string, 'before calling add note')
-    //   this.print_json_object(this.note_accumulator.notes_string, 'L305, in add_note_to_accumulator, notes_string: ')
-    //   if (this.saved.cat_and_subcat.subcat == 'Amazon') {
-    //     console.log('L306, before adding, adding notes without delim, plus vice versa, length of notestring: ' + this.note_accumulator.notes_string.length)
-    //   }
-    // }
     if (this.note_accumulator.notes_string.length == 0) {this.note_accumulator.notes_string = note}
     else {this.note_accumulator.notes_string += this.note_accumulator.delim + note}
-    // if (this.saved.cat_and_subcat.subcat == 'Amazon') {
-    //   this.print_json_object(this.note_accumulator.notes_string, 'after adding, L309, in add_note_to_accumulator, notes_string: ')
-    // }
   }
 
   format_currency(value) {
