@@ -6,13 +6,13 @@ class RangeHelper {
         init_a1_notation: data.a1_notation.toUpperCase(),
         one_cell_only: data.one_cell_only,
       };
-      console.log('init_a1_notation: ' + this.range_input.init_a1_notation)
+      console.error('init_a1_notation: ' + this.range_input.init_a1_notation)
       data.a1_notation != '' ? this.a1_notation = `${data.sheet_name.toLowerCase()}!${data.a1_notation.toUpperCase()}` : ''
       this.ss = SpreadsheetApp.getActiveSpreadsheet();
       this.sheet = this.ss.getSheetByName(this.range_input.init_sheet_name);
       data.a1_notation != '' ? this.letter = this.get_column_letter(this.range_input.init_a1_notation) : ''
       data.a1_notation != '' ? this.get_row_number(this.range_input.init_a1_notation) : ''
-      console.log(`data_notation: ${this.a1_notation}, sheet: ${this.sheet.getName()}`)
+      console.error(`data_notation: ${this.a1_notation}, sheet: ${this.sheet.getName()}`)
     }
 
     run() {
@@ -31,21 +31,22 @@ class RangeHelper {
 
     run_expense_dropdown() {
       if (this.range_input.init_sheet_name != 'expenses') {
-        console.log('Exiting run_expense_dropdown() because the sheet name is wrong')
+        console.error('Exiting run_expense_dropdown() because the sheet name is wrong')
         return;
       }
       const row_and_col = this.log_row_and_column()
       const cat_val = this.get_single_cell_value()
-      // console.log('cat val == ' + cat_val)
+      // console.error('cat val == ' + cat_val)
       if (this.sheet.getName() != 'expenses' || cat_val == '') { return; }
       const range_name = cat_val.split(' ').join('_').toLowerCase();
       const named_range = this.ss.getRangeByName(range_name);
+      // @ts-ignore
       // {sheet = this.sheet, a1_notation = null, row = null, col = null, num_rows = null, num_cols = null}
       // {{row: row_and_col.row, col: row_and_col.col+1}}
       this.call_range({row: row_and_col.row, col: row_and_col.col+1}).clearDataValidations()
       if (!named_range) { return; }
       var col_length = named_range.getNumRows();
-      console.log ('col length == ' + col_length)
+      console.error ('col length == ' + col_length)
       if (col_length < 1) {
         return;
       }
@@ -59,7 +60,7 @@ class RangeHelper {
 
     run_dropdowns_sheet() {
       if (this.range_input.init_sheet_name != 'dropdowns') {
-        console.log('Exiting run_dropdowns_sheet() because the sheet name is wrong')
+        console.error('Exiting run_dropdowns_sheet() because the sheet name is wrong')
         return;
       }
       this.create_or_update_named_range()
@@ -68,7 +69,7 @@ class RangeHelper {
     create_or_update_named_range() {
       const col_header_notation = `${this.letter}1`
       const col_header = this.get_single_cell_value(col_header_notation)
-      console.log(`In create_or_update_named_range, this.letter== ${this.letter} col_header == ${col_header}`)
+      console.error(`In create_or_update_named_range, this.letter== ${this.letter} col_header == ${col_header}`)
       const header_notation = this.get_header_notation()
       const headers = this.get_headers(header_notation)
       const range_name = col_header.split(' ').join('_').toLowerCase();
@@ -76,23 +77,23 @@ class RangeHelper {
       // from function: this.num_rows_in_column_range({in_range=null, start=2, max_num=36} = {}) {
       let num_rows = this.num_rows_in_column_range()
       if (num_rows < 1) {
-        console.log(`Need to exit from create_or_update_named_range. No rows besides header. num_rows: ${num_rows}, range_name: ${range_name}`)
+        console.error(`Need to exit from create_or_update_named_range. No rows besides header. num_rows: ${num_rows}, range_name: ${range_name}`)
         if (this.named_range_exist(range_name)) {
           this.ss.removeNamedRange(range_name);
-          console.log("Named range, " + range_name + ", deleted.")
+          console.error("Named range, " + range_name + ", deleted.")
         }
         return;
       }
       let col_data_start_notation = `${this.letter}2`
       let start_nums = this.log_row_and_column(col_data_start_notation)
       const num_cols = 1
-      // console.log('in create_or_update_named_range, col_header_notation == ' + col_header_notation)
-      // console.log('in create_or_update_named_range, col_data_start_notation == ' + col_data_start_notation)
-      // console.log('in create_or_update_named_range, col_header == ' + col_header)
-      // console.log('in create_or_update_named_range, range_name == ' + range_name)
-      // console.log('in create_or_update_named_range, num_rows == ' + num_rows)
-      // console.log('in create_or_update_named_range, start_row == ' + start_nums.row)
-      // console.log('in create_or_update_named_range, start_col == ' + start_nums.col)
+      // console.error('in create_or_update_named_range, col_header_notation == ' + col_header_notation)
+      // console.error('in create_or_update_named_range, col_data_start_notation == ' + col_data_start_notation)
+      // console.error('in create_or_update_named_range, col_header == ' + col_header)
+      // console.error('in create_or_update_named_range, range_name == ' + range_name)
+      // console.error('in create_or_update_named_range, num_rows == ' + num_rows)
+      // console.error('in create_or_update_named_range, start_row == ' + start_nums.row)
+      // console.error('in create_or_update_named_range, start_col == ' + start_nums.col)
       //{sheet=this.sheet, new_range=null, range_name, start_row=2, start_col, num_rows=1, num_cols=1}
       this.edit_named_range({range_name: range_name, start_row: start_nums.row, start_col: start_nums.col,
                              num_rows: num_rows, num_cols: num_cols})
@@ -102,12 +103,12 @@ class RangeHelper {
     get_single_cell_value(cell_notation=null) {
       let use_notation = this.range_input.init_a1_notation
       if (cell_notation) {use_notation = cell_notation}
-      console.log(`in get_single_cell_value: use_notation == ${use_notation}, cell_notation == ${cell_notation}` +
+      console.error(`in get_single_cell_value: use_notation == ${use_notation}, cell_notation == ${cell_notation}` +
                   `, passed in notation == ${this.range_input.init_a1_notation}`)
 
-      console.log(`in get single cell value, using notation == ${use_notation}`)
+      console.error(`in get single cell value, using notation == ${use_notation}`)
       const value = this.call_range({a1_notation: use_notation}).getValue(); // Single API call
-      console.log(`in get single cell value, value type == ${typeof(value)} resulting value == ${value}`)
+      console.error(`in get single cell value, value type == ${typeof(value)} resulting value == ${value}`)
       return value;
     }
 
@@ -124,7 +125,7 @@ class RangeHelper {
     }
 
     get_row_number(cell_notation) {
-      console.log('in get column_number, cell_notation = ' + cell_notation)
+      console.error('in get column_number, cell_notation = ' + cell_notation)
       const temp = cell_notation.split(':')
       const notation = temp[0]
       let number = ''
@@ -140,11 +141,11 @@ class RangeHelper {
 
     // this depends on current usage - we can count on cell_notation equaling one cell only
     log_row_and_column(notation=this.a1_notation) {
-      console.log(`In log row and column, start_notation == ${notation}`)
+      console.error(`In log row and column, start_notation == ${notation}`)
       const range = this.call_range({a1_notation: notation});
       const row = range.getRow();
       const column = range.getColumn();
-      console.log("In log row and column, sheet: " + this.sheet.getName() + ", row == " + row + ", col == " + column);
+      console.error("In log row and column, sheet: " + this.sheet.getName() + ", row == " + row + ", col == " + column);
       return {
         'row': row,
         'col': column
@@ -162,12 +163,12 @@ class RangeHelper {
 
     // decreases time spent looking up parameters for getRange()
     call_range({sheet = this.sheet, a1_notation = null, row = null, col = null, num_rows = null, num_cols = null} = {}) {
-      console.log(`in call range, sheet == ${sheet.getName()}` )
-      console.log(`in call range, cell_notation == ${a1_notation}` )
-      console.log(`in call range, row == ${row}`)
-      console.log(`in call range, col == ${col}`)
-      console.log(`in call range, num_rows == ${num_rows}`)
-      console.log(`in call range, num_cols == ${num_cols}`)
+      console.error(`in call range, sheet == ${sheet.getName()}` )
+      console.error(`in call range, cell_notation == ${a1_notation}` )
+      console.error(`in call range, row == ${row}`)
+      console.error(`in call range, col == ${col}`)
+      console.error(`in call range, num_rows == ${num_rows}`)
+      console.error(`in call range, num_cols == ${num_cols}`)
       if (a1_notation != null) {
         return sheet.getRange(a1_notation)
       }
@@ -198,8 +199,8 @@ class RangeHelper {
     }
 
     edit_named_range({sheet=this.sheet, new_range=null, range_name, start_row=2, start_col, num_rows=null, num_cols=null} = {}) {
-      console.log(`in edit_named_range, sheet_name is ${sheet.getName()}`)
-      console.log(`in edit_named_range, range_name is ${range_name}`)
+      console.error(`in edit_named_range, sheet_name is ${sheet.getName()}`)
+      console.error(`in edit_named_range, range_name is ${range_name}`)
       if (new_range==null){
         new_range = this.call_range({sheet: sheet, row: start_row, col: start_col, num_rows: num_rows, num_cols: num_cols})
       }
@@ -207,16 +208,16 @@ class RangeHelper {
     }
 
      num_rows_in_column_range({letter=this.letter, start=2, max_num=36} = {}) {
-      // console.log(`in find rows in range, debugging -- this.letter: ${this.letter}`)
-      // console.log(`in find rows in range, debugging -- start: ${start}`)
-      // console.log(`in find rows in range, debugging -- start: ${max_num}`)
+      // console.error(`in find rows in range, debugging -- this.letter: ${this.letter}`)
+      // console.error(`in find rows in range, debugging -- start: ${start}`)
+      // console.error(`in find rows in range, debugging -- start: ${max_num}`)
       let notation = `${letter}${start}:${letter}${max_num}`
-      console.log('in find rows in range, in find rows in range, notation is ' + notation)
+      console.error('in find rows in range, in find rows in range, notation is ' + notation)
       const range = this.sheet.getRange(notation);
-      console.log('in find rows in range, temp range is ' + range.getA1Notation())
+      console.error('in find rows in range, temp range is ' + range.getA1Notation())
       const values = range.getValues();
       const num_rows = values.filter(String).length;
-      console.log('in find rows in range, in find =_rows_in_range, num_rows == ' + num_rows);
+      console.error('in find rows in range, in find =_rows_in_range, num_rows == ' + num_rows);
       return num_rows
     }
 
@@ -235,32 +236,32 @@ class RangeHelper {
       const last_col = this.sheet.getLastColumn();
       const header_cell = this.call_range({row: 1, col: last_col});
       const header_value = header_cell.getValue();
-      console.log('in get_last_value_in_dd_header, last_col: ' + header_value);
-      console.log('in get_last_value_in_dd_header, column header: ' + header_value);
+      console.error('in get_last_value_in_dd_header, last_col: ' + header_value);
+      console.error('in get_last_value_in_dd_header, column header: ' + header_value);
       return header_value;
     }
 
     get_last_value_in_category_column() {
       const named_range = this.ss.getRangeByName('categories');
       if (!named_range) {
-        console.log(`Error: Named range categories not found.`);
+        console.error(`Error: Named range categories not found.`);
         return null;
       }
       const values = named_range.getValues();
-      console.log('in get_last_value_in_category_column, values == ' + values);
+      console.error('in get_last_value_in_category_column, values == ' + values);
       const last_row_idx = values.filter(String).length - 1;
-      console.log('in get_last_value_in_category_column, last rows idx == ' + last_row_idx)
+      console.error('in get_last_value_in_category_column, last rows idx == ' + last_row_idx)
       const last_value = values[last_row_idx];
-      console.log('in get_last_value_in_category_column, value == ' + last_value)
+      console.error('in get_last_value_in_category_column, value == ' + last_value)
       return last_value
     }
 
     append_header_column(headers) {
       const new_col_name = this.get_last_value_in_category_column()
-      console.log('new_col_name == ' + new_col_name)
+      console.error('new_col_name == ' + new_col_name)
       const sub_array = headers.filter(str => str.includes(new_col_name));
-      console.log(`sub_array.length: ${sub_array.length}`)
-      console.log(`headers: ${headers}`)
+      console.error(`sub_array.length: ${sub_array.length}`)
+      console.error(`headers: ${headers}`)
       if (sub_array.length > 0) {
         return;
       }
@@ -275,15 +276,15 @@ class RangeHelper {
 
     create_or_edit_ranges_by_col_header() {
       // Assume headers are in the first row (row 1)
-      console.log(`create_or_edit_ranges_by_col_header, sheet: ${this.sheet}, notation: ${this.a1_notation}, init_a1: ${this.range_input.init_a1_notation}`)
+      console.error(`create_or_edit_ranges_by_col_header, sheet: ${this.sheet}, notation: ${this.a1_notation}, init_a1: ${this.range_input.init_a1_notation}`)
       const header_notation = this.get_header_notation()
-      console.log(`create_or_edit_ranges_by_col_header, header_notation: ${header_notation}`)
+      console.error(`create_or_edit_ranges_by_col_header, header_notation: ${header_notation}`)
       const headers = this.get_headers(header_notation)
-      console.log(`values == ${headers}, header length == ${headers.length}`)
+      console.error(`values == ${headers}, header length == ${headers.length}`)
       // Iterate through each header/column
       for (let idx = 0; idx < headers.length; idx++) {
         let header_name = headers[idx].trim();
-        console.log(`header_name == ${header_name}`)
+        console.error(`header_name == ${header_name}`)
         // Skip empty headers
         if (header_name === "") {
           continue;
@@ -291,17 +292,17 @@ class RangeHelper {
         let range_name = header_name.split(' ').join('_').toLowerCase();
         let start_col = idx + 1
         let current_letter = this.find_current_letter(1, idx + 1)
-        console.log('following in create_or_edit_ranges_by_col_header:')
-        console.log (`idx: ${idx} current_letter: ${current_letter}, range_from_col: ${range_name} `)
+        console.error('following in create_or_edit_ranges_by_col_header:')
+        console.error (`idx: ${idx} current_letter: ${current_letter}, range_from_col: ${range_name} `)
         // Sanitize the header name to be a valid named range name (e.g., replace spaces with underscores)
         let num_rows = this.num_rows_in_column_range({letter: current_letter})
-        console.log (`num_rows = ${num_rows}`)
+        console.error (`num_rows = ${num_rows}`)
         // Define the range for the data in the current column (starts from row 2 to the last data row)
         // getRange(startRow, startColumn, numRows, numColumns)
         // start_col is defined above
         let start_row = 2;
         let num_cols = 1;
-        console.log(`row: start_row, col: start_col, num_rows: num_rows, num_cols: 1`)
+        console.error(`row: start_row, col: start_col, num_rows: num_rows, num_cols: 1`)
         // Check if there is data below the header
         if (num_rows > 0) {
           // call_range({sheet = this.sheet, a1_notation = null, row = null, col = null, num_rows = null, num_cols = null} = {})
@@ -312,7 +313,7 @@ class RangeHelper {
         } else if (this.named_range_exist(range_name)) {
           // This method removes the named range association
           this.ss.removeNamedRange(range_name);
-          console.log("Named range '" + range_name + "' deleted.")
+          console.error("Named range '" + range_name + "' deleted.")
         }
       }
     }
@@ -329,7 +330,7 @@ class RangeHelper {
     get_header_notation() {
       let header_notation = this.range_input.init_a1_notation
       const last_col = this.sheet.getLastColumn()
-      console.log('last_col: ' + last_col)
+      console.error('last_col: ' + last_col)
       const last_letter = this.find_current_letter(1, last_col)
       header_notation += `:${last_letter}1`
       return header_notation
@@ -338,7 +339,7 @@ class RangeHelper {
     get_headers(header_notation) {
       const header_range = this.call_range({a1_notation: header_notation});
       const headers = header_range.getValues()[0]
-      console.log(`values == ${headers}, header length == ${headers.length}`)
+      console.error(`values == ${headers}, header length == ${headers.length}`)
       return headers
     }
 
@@ -351,6 +352,6 @@ class RangeHelper {
     // Have not made this work on any other ranges than the initial one
     test_misc_range_helper() {
       const num_rows = this.num_rows_in_column_range()
-      console.log(`find row_nums == ${num_rows}`)
+      console.error(`find row_nums == ${num_rows}`)
     }
 }

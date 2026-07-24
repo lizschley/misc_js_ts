@@ -18,19 +18,19 @@ function run_reports() {
   const folder_id = readNamedRange('folder_id')
   const prior_monthly_id = readNamedRange('prior_monthly_id')
   const categories = get_categories(prior_monthly_id, 'categories')
-  // console.log(categories)
+  // console.error(categories)
   const input_data = loop_through_folder(folder_id)
   const report_class = new YTD_ExpenseReport(input_data, categories);
   report_class.expense_data_to_reports();
-  // console.log(report_class.detail_csv)
+  // console.error(report_class.detail_csv)
   createAndPopulateSheet(details_name, report_class.detail_csv, EXPECTED_DETAIL_COLUMNS)
   // report_class.totals_csv.forEach(test_total_length)
   createAndPopulateSheet(totals_name, report_class.totals_csv, EXPECTED_TOTAL_COLUMNS)
   createAndPopulateSheet(notes_name, report_class.notes_csv, EXPECTED_DETAIL_COLUMNS)
   finishing_touches(details_name)
   finish_totals(totals_name)
-  //console.log(report_class.month_cat_subtotals)
-  //console.log(report_class.month_subtotals)
+  //console.error(report_class.month_cat_subtotals)
+  //console.error(report_class.month_subtotals)
 }
 
 // before report, called by run_reports()
@@ -48,7 +48,7 @@ function readNamedRange(range_name) {
   var range = SpreadsheetApp.getActive().getRangeByName(range_name);
   var values = range.getValues().flat();
   var folder_id = values.length == 1 ? values[0] : values;
-  console.log(JSON.stringify(`folder_id == ${folder_id}`));
+  console.error(JSON.stringify(`folder_id == ${folder_id}`));
   return folder_id
 }
 
@@ -66,7 +66,7 @@ function loop_through_folder(folder_id) {
     var file = files.next();
     if (file.getMimeType() === "application/vnd.google-apps.spreadsheet") {
       temp_file_id = file.getId()
-      // console.log('temp file id == ' + temp_file_id)
+      // console.error('temp file id == ' + temp_file_id)
       output.push(getData(temp_file_id))
     }
   }
@@ -76,7 +76,7 @@ function loop_through_folder(folder_id) {
 function getData(file_id) {
   let ss = SpreadsheetApp.openById(file_id) // Opens the spreadsheet
   let name = ss.getName();
-  // console.log('name == ' + name)
+  // console.error('name == ' + name)
   let sheet = ss.getSheetByName('expenses');
   // let month_range = sheet.getRange(['A2:D']);
   let month_range = sheet.getRange(2,1,sheet.getLastRow()-1,5)
@@ -85,7 +85,7 @@ function getData(file_id) {
     {column: 2, ascending: true},
   ]);
   let values = month_range.getValues()
-  // console.log(values)
+  // console.error(values)
   return {[name]: values}
 }
 
@@ -98,27 +98,27 @@ function createAndPopulateSheet(report_name, report_array, expected_length) {
   let curr_report = ss.insertSheet(report_name);
 
   // Get the dimensions of the array
-  //console.log(report_array)
+  //console.error(report_array)
   let rows = report_array.length
-  console.log(`for ${report_name} rows == ${rows}`)
+  console.error(`for ${report_name} rows == ${rows}`)
 
   let cols = report_array[0].length;
   if (cols != expected_length) {
     throw new Error (`There should be exactly ${expected_length} columns` )
   }
 
-  console.log(`for ${report_name} cols == ${cols}`)
+  console.error(`for ${report_name} cols == ${cols}`)
 
   // Set up the range for data population
   let range = curr_report.getRange(1, 1, rows, cols);
-  // console.log(`range.getA1Notation() == ${range.getA1Notation()}`)
+  // console.error(`range.getA1Notation() == ${range.getA1Notation()}`)
 
   // Populate the sheet with array data
   try {
     range.setValues(report_array);
   } catch(e){
-    console.log (report_array)
-    console.log(e)
+    console.error (report_array)
+    console.error(e)
   }
 }
 
@@ -126,7 +126,7 @@ function finishing_touches(report_name) {
   sheet = SpreadsheetApp.getActive().getSheetByName(report_name)
   basic_finish(sheet)
   sheet.autoResizeColumns(1, EXPECTED_DETAIL_COLUMNS);
-  // console.log(`before iterate_rows using ${report_name}`)
+  // console.error(`before iterate_rows using ${report_name}`)
   iterate_rows(sheet)
 }
 
@@ -152,8 +152,8 @@ function basic_finish(sheet) {
 function iterate_rows(sheet) {
   let rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).getValues()
   for (let idx = 0; idx < rows.length; idx++) {
-    // console.log(`idx == ${idx}`)
-    // console.log(rows[idx]);
+    // console.error(`idx == ${idx}`)
+    // console.error(rows[idx]);
     check_row_and_highlight(sheet, rows[idx], idx)
   }
 }
@@ -163,7 +163,7 @@ function iterate_rows(sheet) {
 // numRows	Integer	The number of rows to return.
 // numColumns	Integer	The number of columns to return.
 function check_row_and_highlight(sheet, row, idx) {
-  // console.log(`in check row & highlight - passed in sheet name: ${sheet.getName()}`)
+  // console.error(`in check row & highlight - passed in sheet name: ${sheet.getName()}`)
   highlight_color = check_color(row, idx)
   if (highlight_color == 'white') return
   let range = sheet.getRange(idx+2, 1, 1, sheet.getLastColumn()); // Select row 5, all columns
@@ -205,6 +205,6 @@ function list_all_user_properties() {
     properties: all_props
   };
 
-  console.log('=== USER PROPERTIES ===');
-  console.log(JSON.stringify(formatted, null, 2));
+  console.error('=== USER PROPERTIES ===');
+  console.error(JSON.stringify(formatted, null, 2));
 }
